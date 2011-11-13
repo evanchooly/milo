@@ -3,10 +3,32 @@
 
     <servlet>
         <servlet-name>BasicServlet</servlet-name>
-        <servlet-class>
-            com.antwerkz.milo.BasicServlet
-        </servlet-class>
+        <servlet-class>com.antwerkz.milo.BasicServlet</servlet-class>
         <load-on-startup>0</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>BasicServlet1</servlet-name>
+        <servlet-class>com.antwerkz.milo.BasicServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>BasicServlet4</servlet-name>
+        <servlet-class>com.antwerkz.milo.BasicServlet</servlet-class>
+        <load-on-startup>4</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>BasicServlet3</servlet-name>
+        <servlet-class>com.antwerkz.milo.BasicServlet</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>BasicServlet2</servlet-name>
+        <servlet-class>com.antwerkz.milo.BasicServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
     </servlet>
 
     <servlet-mapping>
@@ -14,4 +36,38 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>BasicServlet1</servlet-name>
+        <url-pattern>/1</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>BasicServlet2</servlet-name>
+        <url-pattern>/2</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>BasicServlet3</servlet-name>
+        <url-pattern>/3</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>BasicServlet4</servlet-name>
+        <url-pattern>/4</url-pattern>
+    </servlet-mapping>
+
+    <context-param>
+        <param-name>name</param-name>
+        <param-value>value</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>name2</param-name>
+        <param-value>value2</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>name3</param-name>
+        <param-value>value3</param-value>
+    </context-param>
 </web-app>

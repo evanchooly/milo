@@ -9,8 +9,10 @@ import org.testng.annotations.Test;
 
 @Test(dataProvider = "containers")
 public class ContextTest extends MiloTestBase {
+    private static final String CONTEXT_ROOT = "target/tests";
+
     public void getResourcePaths(ServletContainer container) throws ServletException {
-        final MiloServletContext context = container.createContext("ROOT", "/", "target");
+        final MiloServletContext context = container.createContext("ROOT", "/", CONTEXT_ROOT);
         validate(context.getResourcePaths("/"));
         validate(context.getResourcePaths("/test-classes/com/.."));
         Assert.assertNull(context.getResourcePaths(null));
@@ -18,7 +20,7 @@ public class ContextTest extends MiloTestBase {
 
     @Test(dataProvider = "containers", expectedExceptions = {IllegalArgumentException.class})
     public void badPath(ServletContainer container) throws ServletException {
-        final MiloServletContext context = container.createContext("ROOT", "/", "target");
+        final MiloServletContext context = container.createContext("ROOT", "/", CONTEXT_ROOT);
         validate(context.getResourcePaths("test-classes/com/.."));
     }
 

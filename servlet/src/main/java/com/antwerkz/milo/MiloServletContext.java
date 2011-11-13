@@ -1,14 +1,13 @@
 package com.antwerkz.milo;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.EventListener;
@@ -31,28 +30,24 @@ import javax.servlet.ServletRegistration.Dynamic;
 import javax.servlet.SessionCookieConfig;
 import javax.servlet.SessionTrackingMode;
 import javax.servlet.descriptor.JspConfigDescriptor;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
-import com.antwerkz.milo.deployment.ServletType;
-import com.antwerkz.milo.deployment.WebAppType;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.antwerkz.milo.deployment.DeploymentContext;
+import com.antwerkz.milo.deployment.ServletHolder;
 
 public class MiloServletContext implements ServletContext {
+    private static final String CONTEXT_NAME = DeploymentContext.class.getName();
     private final String path;
     private String root;
     private ServletContainer container;
     private String contextName;
-    private Map<String, Object> attributes = new HashMap<String, Object>();
-    private ConcurrentMap<String, String> initParams = new ConcurrentHashMap<String, String>();
+    private Map<String, Object> attributes = new HashMap<>();
+    private ConcurrentMap<String, String> initParams = new ConcurrentHashMap<>();
     private SessionCookieConfig sessionCookieConfig;
     private Set<SessionTrackingMode> sessionTrackingModes;
-    private List<EventListener> listeners = new ArrayList<EventListener>();
+    private List<EventListener> listeners = new ArrayList<>();
     private ClassLoader webAppClassLoader;
     private File webXml;
+    private Map<String, ServletHolder> mappings;
 
     public MiloServletContext(ServletContainer container, String name, String path, String root)
         throws ServletException {
@@ -66,7 +61,7 @@ public class MiloServletContext implements ServletContext {
         }
         webXml = new File(root, "WEB-INF/web.xml");
         if(!webXml.exists()) {
-            throw new ServletException("No WEB-INF/web.xml found.");
+            throw new ServletException("No WEB-INF/web.xml found: " + webXml.getAbsolutePath());
         }
         webAppClassLoader = new WebAppClassLoader(root);
         deploy();
@@ -74,22 +69,31 @@ public class MiloServletContext implements ServletContext {
 
     private void deploy() throws ServletException {
         try {
-            JAXBContext jc = JAXBContext.newInstance( "com.antwerkz.milo.deployment", webAppClassLoader );
-            Unmarshaller u = jc.createUnmarshaller();
-            final JAXBElement<WebAppType> unmarshal = (JAXBElement<WebAppType>) u.unmarshal(webXml.getAbsoluteFile());
-            final WebAppType webapp = (WebAppType) unmarshal.getValue();
-            XStream xstream = new XStream(new StaxDriver());
-            xstream.fromXML(new FileInputStream(webXml));
-            System.out.println("webapp = " + webapp);
+            final DeploymentContext context = (DeploymentContext) webAppClassLoader.loadClass(CONTEXT_NAME).newInstance();
+            context.setServletContext(this);
+            context.load(webXml.getAbsoluteFile());
+            mappings = context.getMappings();
+            Set<ServletHolder> initialLoads = new TreeSet<ServletHolder>(new Comparator<ServletHolder>() {
+                @Override
+                public int compare(ServletHolder o1, ServletHolder o2) {
+                    return o1.getLoadOnStartup().compareTo(o2.getLoadOnStartup());
+                }
+            });
+            for (ServletHolder servletHolder : mappings.values()) {
+                if(servletHolder.getLoadOnStartup() != -1) {
+                    initialLoads.add(servletHolder);
+                }
+            }
+            for (ServletHolder holder : initialLoads) {
+                holder.loadServlet();
+            }
+            initParams.putAll(context.getInitParams());
 
-        } catch (JAXBException | FileNotFoundException e) {
+        } catch (ReflectiveOperationException e) {
             throw new ServletException(e.getMessage(), e);
         }
     }
 
-    private void deploy(ServletType type) {
-        System.out.println("MiloServletContext.deploy");
-    }
     @Override
     public String getContextPath() {
         return path;
@@ -133,7 +137,7 @@ public class MiloServletContext implements ServletContext {
         if (!path.startsWith("/")) {
             throw new IllegalArgumentException("paths must begin with /");
         }
-        Set<String> set = new TreeSet<String>();
+        Set<String> set = new TreeSet<>();
         try {
             final File dir = new File(root, path).getCanonicalFile();
             final File[] files = dir.listFiles();
@@ -380,4 +384,8 @@ public class MiloServletContext implements ServletContext {
     public void declareRoles(String... roleNames) {
     }
 
+    public Servlet loadServlet(String uri) throws ServletException {
+        final ServletHolder servletHolder = mappings.get(uri);
+        return servletHolder.loadServlet();
+    }
 }

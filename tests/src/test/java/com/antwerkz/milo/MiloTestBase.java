@@ -9,7 +9,8 @@ public class MiloTestBase {
     @DataProvider(name = "containers")
     public Object[][] containers() throws IOException {
         return new Object[][] {
-            new Object[]{new GrizzlyServletContainer(8080)}
+            new Object[]{new GrizzlyServletContainer(8080)},
+//            new Object[]{new NettyServletContainer(8080)},
         };
     }
 }

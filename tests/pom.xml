@@ -27,8 +27,18 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.antwerkz.milo</groupId>
+            <artifactId>netty</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.1.2</version>
         </dependency>
     </dependencies>
 </project>

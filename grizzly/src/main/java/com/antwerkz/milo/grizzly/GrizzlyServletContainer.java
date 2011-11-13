@@ -1,7 +1,6 @@
 package com.antwerkz.milo.grizzly;
 
 import java.io.IOException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,8 +12,6 @@ import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
 
 public class GrizzlyServletContainer extends ServletContainer {
-    private final String host;
-    private final int port;
     private HttpServer server;
 
     /**
@@ -34,11 +31,15 @@ public class GrizzlyServletContainer extends ServletContainer {
     }
 
     public GrizzlyServletContainer(String host, int port) throws IOException {
-        this.host = host;
-        this.port = port;
-        
+        super(host, port);
         server = new HttpServer();
         server.addListener(new NetworkListener("milo", this.host, this.port));
+         server.getServerConfiguration().addHttpHandler(new HttpHandler() {
+            @Override
+            public void service(Request request, Response response) throws Exception {
+                GrizzlyServletContainer.this.service(createRequest(request), createResponse(response));
+            }
+        });
     }
 
     @Override
@@ -56,17 +57,6 @@ public class GrizzlyServletContainer extends ServletContainer {
         return org.glassfish.grizzly.http.server.util.MimeType.getByFilename(fileName);
     }
 
-    @Override
-    public boolean add(final HttpServlet servlet, String... mappings) {
-        server.getServerConfiguration().addHttpHandler(new HttpHandler() {
-            @Override
-            public void service(Request request, Response response) throws Exception {
-                servlet.service(createRequest(request), createResponse(response));
-            }
-        }, mappings);
-        return true;
-    }
-
     private HttpServletRequest createRequest(Request request) {
         return new MiloHttpServletRequest(request);
     }
@@ -74,5 +64,4 @@ public class GrizzlyServletContainer extends ServletContainer {
     private HttpServletResponse createResponse(Response response) {
         return new MiloHttpServletResponse(response);
     }
-
 }
