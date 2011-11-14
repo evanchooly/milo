@@ -23,6 +23,7 @@ import javax.servlet.FilterRegistration;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
@@ -72,28 +73,49 @@ public class MiloServletContext implements ServletContext {
             final DeploymentContext context = (DeploymentContext) webAppClassLoader.loadClass(CONTEXT_NAME).newInstance();
             context.setServletContext(this);
             context.load(webXml.getAbsoluteFile());
-            mappings = context.getMappings();
-            Set<ServletHolder> initialLoads = new TreeSet<ServletHolder>(new Comparator<ServletHolder>() {
-                @Override
-                public int compare(ServletHolder o1, ServletHolder o2) {
-                    return o1.getLoadOnStartup().compareTo(o2.getLoadOnStartup());
-                }
-            });
-            for (ServletHolder servletHolder : mappings.values()) {
-                if(servletHolder.getLoadOnStartup() != -1) {
-                    initialLoads.add(servletHolder);
-                }
-            }
-            for (ServletHolder holder : initialLoads) {
-                holder.loadServlet();
-            }
-            initParams.putAll(context.getInitParams());
+            init(context);
 
         } catch (ReflectiveOperationException e) {
             throw new ServletException(e.getMessage(), e);
         }
     }
 
+    private void init(DeploymentContext context) throws ServletException {
+        initParams.putAll(context.getInitParams());
+        for (String klass : context.getListeners()) {
+            try {
+                final ServletContextListener listener = (ServletContextListener) getClassLoader().loadClass(klass)
+                    .newInstance();
+                listeners.add(listener);
+                listener.contextInitialized(new ServletContextEvent(this));
+            } catch (ReflectiveOperationException e) {
+                throw new ServletException(e.getMessage(), e);
+            }
+        }
+        mappings = context.getMappings();
+        Set<ServletHolder> initialLoads = new TreeSet<>(new Comparator<ServletHolder>() {
+            @Override
+            public int compare(ServletHolder o1, ServletHolder o2) {
+                return o1.getLoadOnStartup().compareTo(o2.getLoadOnStartup());
+            }
+        });
+        for (ServletHolder servletHolder : mappings.values()) {
+            if(servletHolder.getLoadOnStartup() != -1) {
+                initialLoads.add(servletHolder);
+            }
+        }
+        for (ServletHolder holder : initialLoads) {
+            holder.loadServlet();
+        }
+    }
+
+    public void destroy() {
+        for (EventListener listener : listeners) {
+            if(listener instanceof ServletContextListener) {
+                ((ServletContextListener)listener).contextDestroyed(new ServletContextEvent(this));
+            }
+        }
+    }
     @Override
     public String getContextPath() {
         return path;

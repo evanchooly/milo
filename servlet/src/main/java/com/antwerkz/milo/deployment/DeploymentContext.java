@@ -2,6 +2,7 @@ package com.antwerkz.milo.deployment;
 
 import java.io.File;
 import java.lang.String;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ public class DeploymentContext {
     private final Map<String, ServletHolder> mappings = new HashMap<>();
     private Map<String, String> initParams = new HashMap<>();
     private Map<String, ServletHolder> holders = new HashMap<>();
+    private List<String> listeners = new ArrayList<>();
     private MiloServletContext servletContext;
 
     public void setServletContext(MiloServletContext servletContext) {
@@ -45,9 +47,17 @@ public class DeploymentContext {
             register((ServletMappingType) value);
         } else if (value instanceof ParamValueType) {
             record((ParamValueType) value);
+        } else if (value instanceof ListenerType) {
+            record((ListenerType) value);
         } else {
             throw new ServletException("Unknown configuration element: " + value.getClass());
         }
+    }
+
+    private void record(ListenerType listenerType) {
+        final FullyQualifiedClassType listenerClassType = listenerType.getListenerClass();
+        System.out.println("listenerClassType = " + listenerClassType.getValue());
+        listeners.add(listenerClassType.getValue());
     }
 
     private void load(ServletType value) throws ServletException {
@@ -90,5 +100,9 @@ public class DeploymentContext {
 
     public Map<String,String> getInitParams() {
         return initParams;
+    }
+
+    public List<String> getListeners() {
+        return listeners;
     }
 }

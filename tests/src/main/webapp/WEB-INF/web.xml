@@ -70,4 +70,8 @@
         <param-name>name3</param-name>
         <param-value>value3</param-value>
     </context-param>
+    
+    <listener>
+        <listener-class>com.antwerkz.milo.ServletListener</listener-class>
+    </listener>
 </web-app>
