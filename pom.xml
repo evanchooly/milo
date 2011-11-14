@@ -55,6 +55,7 @@
     <modules>
         <module>servlet</module>
         <module>grizzly</module>
+        <module>mina</module>
         <module>netty</module>
         <module>tests</module>
     </modules>

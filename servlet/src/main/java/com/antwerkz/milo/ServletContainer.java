@@ -3,7 +3,7 @@ package com.antwerkz.milo;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.servlet.ServletContext;
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,12 +31,22 @@ public abstract class ServletContainer {
     protected void service(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
         final String uri = request.getRequestURI();
-        final MiloServletContext context = contexts.get(uri);
-        context.loadServlet(uri).service(request, response);
+        final MiloServletContext context = getContext(uri);
+        final Servlet servlet = context.loadServlet(uri);
+        if(servlet == null) {
+            response.setStatus(404);
+        } else {
+            servlet.service(request, response);
+        }
     }
 
-    public ServletContext getContext(String uriPath) {
-        return contexts.get(uriPath);
+    public MiloServletContext getContext(String uriPath) {
+        MiloServletContext context = contexts.get(uriPath);
+        while(context == null && uriPath.contains("/")) {
+            uriPath = uriPath.substring(0, uriPath.lastIndexOf("/") + 1);
+            context = contexts.get(uriPath);
+        }
+        return context;
     }
 
     public abstract String getMimeType(String file);

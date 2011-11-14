@@ -5,6 +5,7 @@ import javax.servlet.ServletException;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -18,7 +19,9 @@ public class BasicServletTest extends MiloTestBase {
             container.start();
             container.createContext("ROOT", "/", "target/tests");
             HttpClient httpclient = new DefaultHttpClient();
-            HttpResponse responseBody = httpclient.execute(new HttpGet("http://localhost:" + 8080));
+            HttpResponse responseBody = httpclient.execute(new HttpGet("http://localhost:" + 8080 + "/root"));
+            final StatusLine statusLine = responseBody.getStatusLine();
+            Assert.assertNotEquals(statusLine.getStatusCode(), 404, "Should not have returned a 404");
             validate(responseBody, "name", "value");
             validate(responseBody, "name2", "value2");
             validate(responseBody, "name3", "value3");

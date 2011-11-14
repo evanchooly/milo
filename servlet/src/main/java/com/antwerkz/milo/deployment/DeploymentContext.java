@@ -76,7 +76,11 @@ public class DeploymentContext {
         final String name = value.getServletName().getValue();
         ServletHolder holder = holders.get(name);
         for (UrlPatternType pattern : urlPatterns) {
-            mappings.put(pattern.getValue(), holder);
+            String uri = pattern.getValue();
+            if(!uri.startsWith("/")) {
+                uri = "/" + uri;
+            }
+            mappings.put(uri, holder);
         }
     }
 

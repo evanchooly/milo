@@ -386,6 +386,6 @@ public class MiloServletContext implements ServletContext {
 
     public Servlet loadServlet(String uri) throws ServletException {
         final ServletHolder servletHolder = mappings.get(uri);
-        return servletHolder.loadServlet();
+        return servletHolder == null ? null : servletHolder.loadServlet();
     }
 }
