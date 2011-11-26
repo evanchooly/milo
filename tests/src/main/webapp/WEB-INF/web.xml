@@ -1,33 +1,51 @@
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <context-param>
+        <param-name>name</param-name>
+        <param-value>value</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>name2</param-name>
+        <param-value>value2</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>name3</param-name>
+        <param-value>value3</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>com.org.milo.ServletListener</listener-class>
+    </listener>
 
     <servlet>
         <servlet-name>BasicServlet</servlet-name>
-        <servlet-class>com.antwerkz.milo.BasicServlet</servlet-class>
+        <servlet-class>com.org.milo.BasicServlet</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>BasicServlet1</servlet-name>
-        <servlet-class>com.antwerkz.milo.BasicServlet</servlet-class>
+        <servlet-class>com.org.milo.BasicServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>BasicServlet4</servlet-name>
-        <servlet-class>com.antwerkz.milo.BasicServlet</servlet-class>
+        <servlet-class>com.org.milo.BasicServlet</servlet-class>
         <load-on-startup>4</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>BasicServlet3</servlet-name>
-        <servlet-class>com.antwerkz.milo.BasicServlet</servlet-class>
+        <servlet-class>com.org.milo.BasicServlet</servlet-class>
         <load-on-startup>3</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>BasicServlet2</servlet-name>
-        <servlet-class>com.antwerkz.milo.BasicServlet</servlet-class>
+        <servlet-class>com.org.milo.BasicServlet</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
 
@@ -55,23 +73,24 @@
         <servlet-name>BasicServlet4</servlet-name>
         <url-pattern>/4</url-pattern>
     </servlet-mapping>
-
-    <context-param>
-        <param-name>name</param-name>
-        <param-value>value</param-value>
-    </context-param>
-
-    <context-param>
-        <param-name>name2</param-name>
-        <param-value>value2</param-value>
-    </context-param>
-
-    <context-param>
-        <param-name>name3</param-name>
-        <param-value>value3</param-value>
-    </context-param>
     
-    <listener>
-        <listener-class>com.antwerkz.milo.ServletListener</listener-class>
-    </listener>
+    <filter>
+        <filter-name>Before</filter-name>
+        <filter-class>com.antwerkz.milo.BeforeFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>Before</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>After</filter-name>
+        <filter-class>com.antwerkz.milo.AfterFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>After</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 </web-app>

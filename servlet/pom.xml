@@ -56,7 +56,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <packageName>com.antwerkz.milo.deployment</packageName>
+                    <packageName>com.org.milo.deployment</packageName>
                     <staleFile>target/generated-sources/com/antwerkz/milo/deployment/WebAppType.java</staleFile>
                 </configuration>
             </plugin>
