@@ -5,44 +5,20 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.antwerkz.milo</groupId>
+        <groupId>org.milo</groupId>
         <artifactId>milo-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.antwerkz.milo</groupId>
+    <groupId>org.milo</groupId>
     <artifactId>servlet</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <name>servlet</name>
 
     <build>
         <defaultGoal>install</defaultGoal>
         <plugins>
-<!--
-            <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>0.8.0</version>
-                <executions>
-                    <execution>
-                        <id>servlet 3.0</id>
-                        <configuration>
-                            <schemaDirectory>src/main/xsd</schemaDirectory>
-                            <schemaIncludes>
-                                <includeSchema>**/web-app_3_0.xsd</includeSchema>
-                            </schemaIncludes>
-                            <generatePackage>com.antwerkz.milo.deployment</generatePackage>
-                            <staleFile>com.antwerkz.milo.deployment.WebAppType</staleFile>
-                            <strict>true</strict>
-                            <catalog>src/main/xsd/catalog.cat</catalog>
-                        </configuration>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
--->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
@@ -56,8 +32,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <packageName>com.org.milo.deployment</packageName>
-                    <staleFile>target/generated-sources/com/antwerkz/milo/deployment/WebAppType.java</staleFile>
+                    <packageName>org.milo.deployment</packageName>
+                    <staleFile>target/generated-sources/org/milo/deployment/WebAppType.java</staleFile>
                 </configuration>
             </plugin>
         </plugins>

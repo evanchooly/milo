@@ -16,36 +16,36 @@
     </context-param>
 
     <listener>
-        <listener-class>com.org.milo.ServletListener</listener-class>
+        <listener-class>org.milo.ServletListener</listener-class>
     </listener>
 
     <servlet>
         <servlet-name>BasicServlet</servlet-name>
-        <servlet-class>com.org.milo.BasicServlet</servlet-class>
+        <servlet-class>org.milo.BasicServlet</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>BasicServlet1</servlet-name>
-        <servlet-class>com.org.milo.BasicServlet</servlet-class>
+        <servlet-class>org.milo.BasicServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>BasicServlet4</servlet-name>
-        <servlet-class>com.org.milo.BasicServlet</servlet-class>
+        <servlet-class>org.milo.BasicServlet</servlet-class>
         <load-on-startup>4</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>BasicServlet3</servlet-name>
-        <servlet-class>com.org.milo.BasicServlet</servlet-class>
+        <servlet-class>org.milo.BasicServlet</servlet-class>
         <load-on-startup>3</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>BasicServlet2</servlet-name>
-        <servlet-class>com.org.milo.BasicServlet</servlet-class>
+        <servlet-class>org.milo.BasicServlet</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
 
@@ -76,7 +76,7 @@
     
     <filter>
         <filter-name>Before</filter-name>
-        <filter-class>com.antwerkz.milo.BeforeFilter</filter-class>
+        <filter-class>org.milo.BeforeFilter</filter-class>
     </filter>
     
     <filter-mapping>
@@ -86,7 +86,7 @@
 
     <filter>
         <filter-name>After</filter-name>
-        <filter-class>com.antwerkz.milo.AfterFilter</filter-class>
+        <filter-class>org.milo.AfterFilter</filter-class>
     </filter>
     
     <filter-mapping>
