@@ -91,6 +91,6 @@
     
     <filter-mapping>
         <filter-name>After</filter-name>
-        <url-pattern>/*</url-pattern>
+        <servlet-name>BasicServlet</servlet-name>
     </filter-mapping>
 </web-app>

@@ -22,6 +22,7 @@ public class BasicServletTest extends MiloTestBase {
             HttpResponse responseBody = httpclient.execute(new HttpGet("http://localhost:" + 8080 + "/root"));
             final StatusLine statusLine = responseBody.getStatusLine();
             Assert.assertNotEquals(statusLine.getStatusCode(), 404, "Should not have returned a 404");
+            System.out.println("responseBody = " + responseBody);
             validate(responseBody, "listener", ServletListener.class.getName());
             validate(responseBody, "name", "value");
             validate(responseBody, "name2", "value2");

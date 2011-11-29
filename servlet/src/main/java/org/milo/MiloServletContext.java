@@ -31,6 +31,8 @@ import javax.servlet.ServletRegistration.Dynamic;
 import javax.servlet.SessionCookieConfig;
 import javax.servlet.SessionTrackingMode;
 import javax.servlet.descriptor.JspConfigDescriptor;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.milo.deployment.DeploymentContext;
 import org.milo.deployment.ServletHolder;
@@ -49,6 +51,7 @@ public class MiloServletContext implements ServletContext {
     private ClassLoader webAppClassLoader;
     private File webXml;
     private Map<String, ServletHolder> mappings;
+    private FilterSet filterSet;
 
     public MiloServletContext(ServletContainer container, String name, String path, String root)
         throws ServletException {
@@ -61,7 +64,7 @@ public class MiloServletContext implements ServletContext {
             throw new RuntimeException(e.getMessage(), e);
         }
         webXml = new File(root, "WEB-INF/web.xml");
-        if(!webXml.exists()) {
+        if (!webXml.exists()) {
             throw new ServletException("No WEB-INF/web.xml found: " + webXml.getAbsolutePath());
         }
         webAppClassLoader = new WebAppClassLoader(root);
@@ -70,7 +73,8 @@ public class MiloServletContext implements ServletContext {
 
     private void deploy() throws ServletException {
         try {
-            final DeploymentContext context = (DeploymentContext) webAppClassLoader.loadClass(CONTEXT_NAME).newInstance();
+            final DeploymentContext context = (DeploymentContext) webAppClassLoader.loadClass(CONTEXT_NAME)
+                .newInstance();
             context.setServletContext(this);
             context.load(webXml.getAbsoluteFile());
             init(context);
@@ -81,6 +85,35 @@ public class MiloServletContext implements ServletContext {
     }
 
     private void init(DeploymentContext context) throws ServletException {
+        loadInitParams(context);
+        loadAndInitServlets(context);
+        loadAndInitFilters(context);
+    }
+
+    private void loadAndInitFilters(DeploymentContext context) throws ServletException {
+        filterSet = context.getFilterSet();
+        filterSet.init(this);
+    }
+
+    private void loadAndInitServlets(DeploymentContext context) throws ServletException {
+        mappings = context.getMappings();
+        Set<ServletHolder> initialLoads = new TreeSet<>(new Comparator<ServletHolder>() {
+            @Override
+            public int compare(ServletHolder o1, ServletHolder o2) {
+                return o1.getLoadOnStartup().compareTo(o2.getLoadOnStartup());
+            }
+        });
+        for (ServletHolder servletHolder : mappings.values()) {
+            if (servletHolder.getLoadOnStartup() != -1) {
+                initialLoads.add(servletHolder);
+            }
+        }
+        for (ServletHolder holder : initialLoads) {
+            holder.loadServlet();
+        }
+    }
+
+    private void loadInitParams(DeploymentContext context) throws ServletException {
         initParams.putAll(context.getInitParams());
         for (String klass : context.getListeners()) {
             try {
@@ -92,30 +125,16 @@ public class MiloServletContext implements ServletContext {
                 throw new ServletException(e.getMessage(), e);
             }
         }
-        mappings = context.getMappings();
-        Set<ServletHolder> initialLoads = new TreeSet<>(new Comparator<ServletHolder>() {
-            @Override
-            public int compare(ServletHolder o1, ServletHolder o2) {
-                return o1.getLoadOnStartup().compareTo(o2.getLoadOnStartup());
-            }
-        });
-        for (ServletHolder servletHolder : mappings.values()) {
-            if(servletHolder.getLoadOnStartup() != -1) {
-                initialLoads.add(servletHolder);
-            }
-        }
-        for (ServletHolder holder : initialLoads) {
-            holder.loadServlet();
-        }
     }
 
     public void destroy() {
         for (EventListener listener : listeners) {
-            if(listener instanceof ServletContextListener) {
-                ((ServletContextListener)listener).contextDestroyed(new ServletContextEvent(this));
+            if (listener instanceof ServletContextListener) {
+                ((ServletContextListener) listener).contextDestroyed(new ServletContextEvent(this));
             }
         }
     }
+
     @Override
     public String getContextPath() {
         return path;
@@ -341,7 +360,7 @@ public class MiloServletContext implements ServletContext {
 
     @Override
     public SessionCookieConfig getSessionCookieConfig() {
-        if(sessionCookieConfig == null) {
+        if (sessionCookieConfig == null) {
             sessionCookieConfig = new MiloSessionCookieConfig();
         }
         return sessionCookieConfig;
@@ -365,7 +384,7 @@ public class MiloServletContext implements ServletContext {
     @Override
     public void addListener(String className) {
         try {
-            addListener((ServletContextListener)getClassLoader().loadClass(className).newInstance());
+            addListener((ServletContextListener) getClassLoader().loadClass(className).newInstance());
         } catch (ReflectiveOperationException e) {
             log(e, e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
@@ -406,8 +425,24 @@ public class MiloServletContext implements ServletContext {
     public void declareRoles(String... roleNames) {
     }
 
-    public Servlet loadServlet(String uri) throws ServletException {
-        final ServletHolder servletHolder = mappings.get(uri);
-        return servletHolder == null ? null : servletHolder.loadServlet();
+    public ServletHolder loadServlet(String uri) throws ServletException {
+        ServletHolder servletHolder = null;
+        while (servletHolder == null) {
+            servletHolder = mappings.get(uri);
+            if(servletHolder == null) {
+                uri = uri.substring(uri.lastIndexOf("/"));
+            }
+        }
+        return servletHolder;
+    }
+
+    public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        final ServletHolder servlet = loadServlet(request.getRequestURI());
+        if (servlet == null) {
+            response.setStatus(404);
+        } else {
+            filterSet.doFilter(request, response, servlet);
+        }
+
     }
 }

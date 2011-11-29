@@ -3,14 +3,20 @@ package org.milo.deployment;
 import java.io.IOException;
 import java.lang.String;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.Filter;
-import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import org.milo.FilterChainImpl;
+import org.milo.MiloServletContext;
 
 @SuppressWarnings({"unchecked"})
 public class FilterHolder {
@@ -19,28 +25,26 @@ public class FilterHolder {
     private Filter filter;
     private String filterClass;
     private boolean asyncSuppported;
-    private FilterChain filterChain;
 
-    public FilterHolder(FilterChain filterChain) {
-        this.filterChain = filterChain;
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChainImpl chain)
+        throws ServletException, IOException {
+        getFilter().doFilter(request, response, chain);
     }
 
-    public void doFilter(HttpServletRequest request, HttpServletResponse response) throws ServletException,
-        IOException {
-        final String uri = request.getRequestURI();
-        Matcher matcher = null;
-        for (int i = 0; i < urlPattern.size() && matcher == null; i++) {
-            Pattern pattern = urlPattern.get(i);
-            final Matcher match = pattern.matcher(uri);
-            if (match.matches()) {
-                matcher = match;
-            }
+    public boolean matches(ServletRequest request) {
+        if (!(request instanceof HttpServletRequest)) {
+            return true;
         }
-        if(matcher == null) {
+        boolean matched = false;
+        final String uri = ((HttpServletRequest) request).getRequestURI();
+        final Iterator<Pattern> iterator = urlPattern.iterator();
+        while (iterator.hasNext() && !matched) {
+            matched = iterator.next().matcher(uri).matches();
+        }
+        if (!matched) {
             // check servlets
-        } else {
-            getFilter().doFilter(request, response, filterChain);
         }
+        return matched;
     }
 
     public void addServletName(String name) {
@@ -48,15 +52,14 @@ public class FilterHolder {
     }
 
     public void addUrlPattern(String value) {
-        urlPattern.add(Pattern.compile(value));
+        urlPattern.add(Pattern.compile(value.replace("*", ".*")));
     }
 
     public Filter getFilter() throws ServletException {
         if (filter == null) {
-            final Class<? extends Filter> aClass;
             try {
-                aClass = (Class<? extends Filter>) getClass().getClassLoader().loadClass(filterClass);
-                filter = aClass.newInstance();
+                filter = ((Class<? extends Filter>) getClass().getClassLoader()
+                                    .loadClass(filterClass)).newInstance();
             } catch (ReflectiveOperationException e) {
                 throw new ServletException(e.getMessage(), e);
             }
@@ -68,7 +71,31 @@ public class FilterHolder {
         this.filterClass = filterClass;
     }
 
-    public void setAsyncSuppported(boolean asyncSuppported) {
-        this.asyncSuppported = asyncSuppported;
+    public void setAsyncSupported(boolean asyncSupported) {
+        this.asyncSuppported = asyncSupported;
+    }
+
+    public void init(final String filterName, final MiloServletContext context) throws ServletException {
+        getFilter().init(new FilterConfig() {
+            @Override
+            public String getFilterName() {
+                return filterName;
+            }
+
+            @Override
+            public ServletContext getServletContext() {
+                return context;
+            }
+
+            @Override
+            public String getInitParameter(String name) {
+                return context.getInitParameter(name);
+            }
+
+            @Override
+            public Enumeration<String> getInitParameterNames() {
+                return context.getInitParameterNames();
+            }
+        });
     }
 }

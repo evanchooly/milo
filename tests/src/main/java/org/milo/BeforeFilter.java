@@ -16,6 +16,8 @@ public class BeforeFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
+        response.getWriter().write("###BEFORE###");
+        chain.doFilter(request, response);
     }
 
     @Override

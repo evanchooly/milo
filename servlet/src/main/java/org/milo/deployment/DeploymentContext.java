@@ -12,7 +12,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
-import org.milo.FilterChainImpl;
+import org.milo.FilterSet;
 import org.milo.MiloServletContext;
 
 @SuppressWarnings({"unchecked"})
@@ -22,8 +22,7 @@ public class DeploymentContext {
     private Map<String, ServletHolder> servletHolders = new HashMap<>();
     private List<String> listeners = new ArrayList<>();
     private MiloServletContext servletContext;
-    private Map<String, FilterType> filters = new HashMap<>();
-    private FilterChainImpl filterChain;
+    private FilterSet filterSet;
 
     public void setServletContext(MiloServletContext servletContext) {
         this.servletContext = servletContext;
@@ -36,53 +35,57 @@ public class DeploymentContext {
             final WebAppType webApp = ((JAXBElement<WebAppType>) jc.createUnmarshaller().unmarshal(file))
                 .getValue();
             for (JAXBElement<?> jaxbElement : webApp.getModuleNameOrDescriptionAndDisplayName()) {
-                dispatch(jaxbElement.getValue());
+                parse(jaxbElement.getValue());
+            }
+
+            if(filterSet != null) {
+                filterSet.init(servletContext);
             }
         } catch (JAXBException e) {
             throw new ServletException(e.getMessage(), e);
         }
     }
 
-    private void dispatch(final Object value) throws ServletException {
+    private void parse(final Object value) throws ServletException {
         if (value instanceof ServletType) {
-            record((ServletType) value);
+            parse((ServletType) value);
         } else if (value instanceof ServletMappingType) {
-            record((ServletMappingType) value);
+            parse((ServletMappingType) value);
         } else if (value instanceof FilterType) {
-            record((FilterType) value);
+            parse((FilterType) value);
         } else if (value instanceof FilterMappingType) {
-            record((FilterMappingType) value);
+            parse((FilterMappingType) value);
         } else if (value instanceof ParamValueType) {
-            record((ParamValueType) value);
+            parse((ParamValueType) value);
         } else if (value instanceof ListenerType) {
-            record((ListenerType) value);
+            parse((ListenerType) value);
         } else if (value instanceof ErrorPageType) {
-            record((ErrorPageType) value);
+            parse((ErrorPageType) value);
         } else {
             throw new ServletException("Unknown configuration element: " + value.getClass());
         }
     }
 
-    private void record(ErrorPageType value) {
+    private void parse(ErrorPageType value) {
         System.out.println("value = " + value);
     }
 
-    private void record(ParamValueType value) {
+    private void parse(ParamValueType value) {
         initParams.put(value.getParamName().getValue(), value.getParamValue().getValue());
     }
 
-    private void record(ListenerType listenerType) {
+    private void parse(ListenerType listenerType) {
         listeners.add(listenerType.getListenerClass().getValue());
     }
 
-    private void record(FilterType value) {
-        if (filterChain == null) {
-            filterChain = new FilterChainImpl();
+    private void parse(FilterType value) {
+        if (filterSet == null) {
+            filterSet = new FilterSet();
         }
-        filterChain.add(value);
+        filterSet.add(value);
     }
 
-    private void record(ServletType value) throws ServletException {
+    private void parse(ServletType value) throws ServletException {
         final String name = value.getServletName().getValue();
         try {
             final Class<Servlet> clazz = (Class<Servlet>) getClass().getClassLoader().loadClass(
@@ -99,9 +102,9 @@ public class DeploymentContext {
         }
     }
 
-    private void record(FilterMappingType value) throws ServletException {
+    private void parse(FilterMappingType value) throws ServletException {
         final String name = value.getFilterName().getValue();
-        FilterHolder holder = filterChain.getFilter(name);
+        FilterHolder holder = filterSet.getFilter(name);
         final List<Object> mappingInfo = value.getUrlPatternOrServletName();
         for (Object info : mappingInfo) {
             if (info instanceof ServletNameType) {
@@ -112,7 +115,7 @@ public class DeploymentContext {
         }
     }
 
-    private void record(ServletMappingType value) {
+    private void parse(ServletMappingType value) {
         final List<UrlPatternType> urlPatterns = value.getUrlPattern();
         final String name = value.getServletName().getValue();
         ServletHolder holder = servletHolders.get(name);
@@ -135,5 +138,9 @@ public class DeploymentContext {
 
     public List<String> getListeners() {
         return listeners;
+    }
+
+    public FilterSet getFilterSet() {
+        return filterSet;
     }
 }
