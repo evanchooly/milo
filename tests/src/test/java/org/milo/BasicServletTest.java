@@ -1,6 +1,8 @@
 package org.milo;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.servlet.ServletException;
 
 import org.apache.http.Header;
@@ -19,17 +21,31 @@ public class BasicServletTest extends MiloTestBase {
             container.start();
             container.createContext("ROOT", "/", "target/tests");
             HttpClient httpclient = new DefaultHttpClient();
-            HttpResponse responseBody = httpclient.execute(new HttpGet("http://localhost:" + 8080 + "/root"));
-            final StatusLine statusLine = responseBody.getStatusLine();
+            HttpResponse response = httpclient.execute(new HttpGet("http://localhost:" + 8080 + "/root"));
+            final StatusLine statusLine = response.getStatusLine();
             Assert.assertNotEquals(statusLine.getStatusCode(), 404, "Should not have returned a 404");
-            System.out.println("responseBody = " + responseBody);
-            validate(responseBody, "listener", ServletListener.class.getName());
-            validate(responseBody, "name", "value");
-            validate(responseBody, "name2", "value2");
-            validate(responseBody, "name3", "value3");
+            String body = read(response.getEntity().getContent());
+            System.out.println("response = " + response);
+            validate(response, "listener", ServletListener.class.getName());
+            validate(response, "name", "value");
+            validate(response, "name2", "value2");
+            validate(response, "name3", "value3");
+            Assert.assertTrue(body.startsWith(BeforeFilter.BEFORE));
+            Assert.assertTrue(body.endsWith(AfterFilter.AFTER));
         } finally {
             container.stop();
         }
+    }
+
+    private String read(InputStream content) throws IOException {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        int read;
+        final byte[] bytes = new byte[4096];
+        while((read = content.read(bytes)) != -1) {
+            stream.write(bytes, 0, read);
+        }
+
+        return new String(stream.toByteArray());
     }
 
     private void validate(HttpResponse responseBody, final String name, final String value) {

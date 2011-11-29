@@ -28,7 +28,7 @@ public class FilterChainImpl implements FilterChain {
             boolean matched = false;
             while (!matched && holders.hasNext()) {
                 final FilterHolder holder = holders.next();
-                if (holder.matches(request)) {
+                if (holder.matches(request, servlet.getName())) {
                     matched = true;
                     holder.doFilter(request, response, this);
                 }

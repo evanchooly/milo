@@ -20,8 +20,8 @@ import org.milo.MiloServletContext;
 
 @SuppressWarnings({"unchecked"})
 public class FilterHolder {
-    private List<Pattern> urlPattern = new ArrayList<>();
-    private List<String> servletName = new ArrayList<>();
+    private List<Pattern> urlPatterns = new ArrayList<>();
+    private List<String> servletNames = new ArrayList<>();
     private Filter filter;
     private String filterClass;
     private boolean asyncSuppported;
@@ -31,28 +31,28 @@ public class FilterHolder {
         getFilter().doFilter(request, response, chain);
     }
 
-    public boolean matches(ServletRequest request) {
+    public boolean matches(ServletRequest request, String name) {
         if (!(request instanceof HttpServletRequest)) {
             return true;
         }
         boolean matched = false;
         final String uri = ((HttpServletRequest) request).getRequestURI();
-        final Iterator<Pattern> iterator = urlPattern.iterator();
+        final Iterator<Pattern> iterator = urlPatterns.iterator();
         while (iterator.hasNext() && !matched) {
             matched = iterator.next().matcher(uri).matches();
         }
         if (!matched) {
-            // check servlets
+            matched = servletNames.contains(name);
         }
         return matched;
     }
 
     public void addServletName(String name) {
-        servletName.add(name);
+        servletNames.add(name);
     }
 
     public void addUrlPattern(String value) {
-        urlPattern.add(Pattern.compile(value.replace("*", ".*")));
+        urlPatterns.add(Pattern.compile(value.replace("*", ".*")));
     }
 
     public Filter getFilter() throws ServletException {

@@ -9,6 +9,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 public class AfterFilter implements Filter {
+    public static final String AFTER = "###AFTER###";
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
@@ -17,7 +19,7 @@ public class AfterFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
         chain.doFilter(request, response);
-        response.getWriter().write("###AFTER###");
+        response.getWriter().write(AFTER);
     }
 
     @Override

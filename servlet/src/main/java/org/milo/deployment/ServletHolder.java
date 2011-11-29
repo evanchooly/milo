@@ -22,6 +22,10 @@ public class ServletHolder {
         klass = clazz;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void setServletContext(MiloServletContext miloServletContext) {
         servletContext = miloServletContext;
     }
