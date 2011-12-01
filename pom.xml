@@ -74,7 +74,7 @@
                     <useDefaultMapping>true</useDefaultMapping>
                     <properties>
                         <year>2011</year>
-                        <user.name>Justin Lee</user.name>
+                        <full.name>Justin Lee</full.name>
                         <email>jlee@antwerkz.com</email>
                     </properties>
                     <encoding>UTF-8</encoding>
