@@ -81,6 +81,8 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <id>check-headers</id>
+                        <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
