@@ -64,12 +64,6 @@
                     <failIfMissing>true</failIfMissing>
                     <strictCheck>true</strictCheck>
                     <aggregate>true</aggregate>
-<!--
-                    <includes>
-                        <include>**/*.java</include>
-                        <include>**/test/**</include>
-                    </includes>
--->
                     <excludes>
                         <exclude>LICENSE</exclude>
                         <exclude>target/**</exclude>
@@ -80,6 +74,7 @@
                     <useDefaultMapping>true</useDefaultMapping>
                     <properties>
                         <year>2011</year>
+                        <user.name>Justin Lee</user.name>
                         <email>jlee@antwerkz.com</email>
                     </properties>
                     <encoding>UTF-8</encoding>
