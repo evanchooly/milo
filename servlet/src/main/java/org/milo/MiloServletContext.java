@@ -269,7 +269,7 @@ public class MiloServletContext implements ServletContext {
 
     @Override
     public String getServerInfo() {
-        return "milo/1.0-SNAPSHOT";
+        return "milo/0.1-SNAPSHOT";
     }
 
     @Override

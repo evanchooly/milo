@@ -5,31 +5,29 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.milo</groupId>
-        <artifactId>milo-parent</artifactId>
+        <groupId>org.milo.tests</groupId>
+        <artifactId>test-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.milo</groupId>
-    <artifactId>mina</artifactId>
+    <groupId>org.milo.tests</groupId>
+    <artifactId>basic</artifactId>
     <version>0.1-SNAPSHOT</version>
-    <name>milo-mina</name>
+    <packaging>war</packaging>
+
+    <name>basic</name>
+
+    
+    <build>
+        <defaultGoal>package</defaultGoal>
+    </build>
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.mina</groupId>
-            <artifactId>mina-core</artifactId>
-            <version>2.0.4</version>
-        </dependency>
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.milo</groupId>
-            <artifactId>servlet</artifactId>
-            <version>${project.version}</version>
+            <version>3.0.1</version>
         </dependency>
     </dependencies>
-
 </project>

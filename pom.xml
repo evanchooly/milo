@@ -4,29 +4,28 @@
 
     <groupId>org.milo</groupId>
     <artifactId>milo-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>milo-parent</name>
-    <url>http://antwerkz.com</url>
+    <url>http://github.com/evanchooly/milo</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/evanchooly/milo.git</url>
+    </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>mc-release</id>
-            <name>Local Maven repository of releases</name>
-            <url>http://mc-repo.googlecode.com/svn/maven2/releases</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
     <build>
         <pluginManagement>
             <plugins>

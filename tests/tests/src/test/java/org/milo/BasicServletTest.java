@@ -34,7 +34,7 @@ public class BasicServletTest extends MiloTestBase {
     public void deployServlet(ServletContainer container) throws IOException, ServletException {
         try {
             container.start();
-            container.createContext("ROOT", "/", "target/tests");
+            container.createContext("ROOT", "/", "src/main/webapp");
             HttpClient httpclient = new DefaultHttpClient();
             HttpResponse response = httpclient.execute(new HttpGet("http://localhost:" + 8080 + "/root"));
             final StatusLine statusLine = response.getStatusLine();

@@ -1,51 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.milo</groupId>
         <artifactId>milo-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.1-SNAPSHOT</version>
+        <relativePath>../</relativePath>
     </parent>
 
-    <groupId>org.milo</groupId>
-    <artifactId>tests</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <groupId>org.milo.tests</groupId>
+    <artifactId>test-parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-    <name>tests</name>
+    <name>test-parent</name>
 
-    <build>
-        <finalName>tests</finalName>
-        <defaultGoal>test</defaultGoal>
-    </build>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.milo</groupId>
-            <artifactId>grizzly</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.milo</groupId>
-            <artifactId>mina</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.milo</groupId>
-            <artifactId>netty</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.1.2</version>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>tests</module>
+    </modules>
 </project>
