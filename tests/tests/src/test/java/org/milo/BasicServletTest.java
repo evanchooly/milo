@@ -16,6 +16,7 @@
 package org.milo;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.servlet.ServletException;
@@ -34,7 +35,8 @@ public class BasicServletTest extends MiloTestBase {
     public void deployServlet(ServletContainer container) throws IOException, ServletException {
         try {
             container.start();
-            container.createContext("ROOT", "/", "src/main/webapp");
+            System.out.println("new File(\".\").getAbsolutePath() = " + new File(".").getAbsolutePath());
+            container.createContext("ROOT", "/", "tests/basic/target/basic");
             HttpClient httpclient = new DefaultHttpClient();
             HttpResponse response = httpclient.execute(new HttpGet("http://localhost:" + 8080 + "/root"));
             final StatusLine statusLine = response.getStatusLine();
@@ -45,8 +47,8 @@ public class BasicServletTest extends MiloTestBase {
             validate(response, "name", "value");
             validate(response, "name2", "value2");
             validate(response, "name3", "value3");
-            Assert.assertTrue(body.startsWith(BeforeFilter.BEFORE));
-            Assert.assertTrue(body.endsWith(AfterFilter.AFTER));
+            Assert.assertTrue(body.startsWith("###BEFORE###"));
+            Assert.assertTrue(body.endsWith("###AFTER###"));
         } finally {
             container.stop();
         }

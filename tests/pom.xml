@@ -6,7 +6,7 @@
         <groupId>org.milo</groupId>
         <artifactId>milo-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
-        <relativePath>../</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.milo.tests</groupId>
@@ -17,6 +17,7 @@
     <name>test-parent</name>
 
     <modules>
+        <module>basic</module>
         <module>tests</module>
     </modules>
 </project>
