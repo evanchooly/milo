@@ -63,6 +63,9 @@
                     <failIfMissing>true</failIfMissing>
                     <strictCheck>true</strictCheck>
                     <aggregate>true</aggregate>
+                    <includes>
+                        <include>*.xml</include>
+                    </includes>
                     <excludes>
                         <exclude>LICENSE</exclude>
                         <exclude>target/**</exclude>

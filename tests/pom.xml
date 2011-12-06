@@ -18,6 +18,7 @@
 
     <modules>
         <module>basic</module>
+        <module>resourcePaths</module>
         <module>tests</module>
     </modules>
 </project>

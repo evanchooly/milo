@@ -10,10 +10,10 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.milo</groupId>
+    <groupId>org.milo.tests</groupId>
     <artifactId>tests</artifactId>
     <version>0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <name>tests</name>
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.milo;
+package org.milo.tests;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -27,6 +27,8 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.milo.ServletContainer;
+import org.milo.ServletListener;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

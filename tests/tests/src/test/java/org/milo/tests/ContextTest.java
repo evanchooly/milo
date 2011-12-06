@@ -13,41 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.milo;
+package org.milo.tests;
 
-import java.io.File;
+import java.util.Arrays;
 import java.util.Set;
 import javax.servlet.ServletException;
 
+import org.milo.MiloServletContext;
+import org.milo.ServletContainer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 @Test(dataProvider = "containers")
 public class ContextTest extends MiloTestBase {
-    private static final String CONTEXT_ROOT = "tests/basic/target/basic";
+    private static final String CONTEXT_ROOT = "tests/resourcePaths/target/resourcePaths";
 
     public void getResourcePaths(ServletContainer container) throws ServletException {
         final MiloServletContext context = container.createContext("ROOT", "/", CONTEXT_ROOT);
-        validate(context.getResourcePaths("/"));
-        validate(context.getResourcePaths("/test-classes/com/.."));
+        validate(context.getResourcePaths("/"), "/welcome.html", "/catalog/", "/customer/", "/META-INF/", "/WEB-INF/");
+        validate(context.getResourcePaths("/catalog/"), "/catalog/index.html", "/catalog/products.html",
+            "/catalog/offers/", "/catalog/moreOffers/");
         Assert.assertNull(context.getResourcePaths(null));
     }
 
     @Test(dataProvider = "containers", expectedExceptions = {IllegalArgumentException.class})
     public void badPath(ServletContainer container) throws ServletException {
         final MiloServletContext context = container.createContext("ROOT", "/", CONTEXT_ROOT);
-        validate(context.getResourcePaths("test-classes/com/.."));
+        Assert.assertNull(context.getResourcePaths("test-classes/com/.."));
     }
 
-    private void validate(Set<String> paths) {
-        Assert.assertFalse(paths.isEmpty());
-        for (String path : paths) {
-            final File file = new File(path);
-            if(file.isDirectory()) {
-                Assert.assertTrue(path.endsWith("/"));
-            } else {
-                Assert.assertFalse(path.endsWith("/"));
-            }
+    private void validate(Set<String> paths, String... expected) {
+        Assert.assertEquals(paths.size(), expected.length, String.format("expected %s but got %s",
+            Arrays.toString(expected), paths));
+        for (String path : expected) {
+            Assert.assertTrue(paths.contains(path), String.format("Looking for %s in %s", path, paths));
         }
     }
 }

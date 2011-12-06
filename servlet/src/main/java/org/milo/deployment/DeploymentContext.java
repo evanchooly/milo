@@ -37,7 +37,7 @@ public class DeploymentContext {
     private Map<String, ServletHolder> servletHolders = new HashMap<>();
     private List<String> listeners = new ArrayList<>();
     private MiloServletContext servletContext;
-    private FilterSet filterSet;
+    private FilterSet filterSet = new FilterSet();
 
     public void setServletContext(MiloServletContext servletContext) {
         this.servletContext = servletContext;
@@ -52,8 +52,7 @@ public class DeploymentContext {
             for (JAXBElement<?> jaxbElement : webApp.getModuleNameOrDescriptionAndDisplayName()) {
                 parse(jaxbElement.getValue());
             }
-
-            if(filterSet != null) {
+            if (filterSet != null) {
                 filterSet.init(servletContext);
             }
         } catch (JAXBException e) {
@@ -94,9 +93,6 @@ public class DeploymentContext {
     }
 
     private void parse(FilterType value) {
-        if (filterSet == null) {
-            filterSet = new FilterSet();
-        }
         filterSet.add(value);
     }
 

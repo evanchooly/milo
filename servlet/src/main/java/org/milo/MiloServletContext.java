@@ -16,10 +16,13 @@
 package org.milo;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,6 +36,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
 import javax.servlet.RequestDispatcher;
@@ -54,6 +59,7 @@ import org.milo.deployment.ServletHolder;
 
 public class MiloServletContext implements ServletContext {
     private static final String CONTEXT_NAME = DeploymentContext.class.getName();
+    private static final String RESOURCES_PATH = "META-INF/resources";
     private final String path;
     private String root;
     private ServletContainer container;
@@ -67,6 +73,7 @@ public class MiloServletContext implements ServletContext {
     private File webXml;
     private Map<String, ServletHolder> mappings;
     private FilterSet filterSet;
+    private Map<String, List<String>> jarCache;
 
     public MiloServletContext(ServletContainer container, String name, String path, String root)
         throws ServletException {
@@ -186,30 +193,50 @@ public class MiloServletContext implements ServletContext {
     }
 
     @Override
-    public Set<String> getResourcePaths(String path) {
-        if (path == null) {
+    public Set<String> getResourcePaths(String resourcePath) {
+        if (resourcePath == null) {
             return null;
         }
-        if (!path.startsWith("/")) {
+        if (!resourcePath.startsWith("/")) {
             throw new IllegalArgumentException("paths must begin with /");
         }
         Set<String> set = new TreeSet<>();
-        try {
-            final File dir = new File(root, path).getCanonicalFile();
-            final File[] files = dir.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    String canonicalPath = file.getCanonicalPath();
-                    if (file.isDirectory()) {
-                        canonicalPath += "/";
-                    }
-                    set.add(canonicalPath);
-                }
+        Path rootPath = Paths.get(root);
+        for (File path : Paths.get(root, resourcePath).toFile().listFiles()) {
+            String relativePath = rootPath.relativize(path.toPath()).toString();
+            if (!relativePath.startsWith("/")) {
+                relativePath = "/" + relativePath;
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            if (path.isDirectory()) {
+                relativePath += "/";
+            }
+            set.add(relativePath);
         }
+        scanJars(resourcePath, set);
         return set;
+    }
+
+    private void scanJars(String resourcePath, Set<String> set) {
+        final String rootPath = RESOURCES_PATH + resourcePath;
+        Path webInf = Paths.get(root, "/WEB-INF/lib");
+        for (File path : webInf.toFile().listFiles(new JarZipFilenameFilter())) {
+            try (ZipFile zip = new ZipFile(path)) {
+                final Enumeration<? extends ZipEntry> entries = zip.entries();
+                while (entries.hasMoreElements()) {
+                    final ZipEntry entry = entries.nextElement();
+                    if (entry.getName().startsWith(rootPath)) {
+                        final String substring = entry.getName().substring(rootPath.length());
+                        final boolean onlyOnEnd = substring.indexOf("/") == substring.lastIndexOf("/")
+                            && substring.indexOf("/") == substring.length() - 1;
+                        if (!substring.isEmpty() && onlyOnEnd) {
+                            set.add("/" + entry.getName().substring(RESOURCES_PATH.length() + 1));
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                log(e, e.getMessage());
+            }
+        }
     }
 
     @Override
@@ -444,7 +471,7 @@ public class MiloServletContext implements ServletContext {
         ServletHolder servletHolder = null;
         while (servletHolder == null) {
             servletHolder = mappings.get(uri);
-            if(servletHolder == null) {
+            if (servletHolder == null) {
                 uri = uri.substring(uri.lastIndexOf("/"));
             }
         }
@@ -459,5 +486,13 @@ public class MiloServletContext implements ServletContext {
             filterSet.doFilter(request, response, servlet);
         }
 
+    }
+
+    private static class JarZipFilenameFilter implements FilenameFilter {
+        @Override
+        public boolean accept(File dir, String name) {
+            final String lower = name.toLowerCase();
+            return lower.endsWith(".jar") || lower.endsWith(".zip");
+        }
     }
 }

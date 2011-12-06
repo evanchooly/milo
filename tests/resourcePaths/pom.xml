@@ -12,14 +12,14 @@
     </parent>
 
     <groupId>org.milo.tests</groupId>
-    <artifactId>basic-test</artifactId>
+    <artifactId>resource-paths</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>basic-test</name>
+    <name>resource-paths</name>
 
     <build>
-        <finalName>basic</finalName>
+        <finalName>resourcePaths</finalName>
         <defaultGoal>install</defaultGoal>
         <plugins>
             <plugin>
@@ -35,6 +35,7 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.0.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
