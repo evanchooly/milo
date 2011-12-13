@@ -15,9 +15,14 @@
  */
 package org.milo.tests;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
 import org.milo.grizzly.GrizzlyServletContainer;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 
 public class MiloTestBase {
@@ -28,5 +33,21 @@ public class MiloTestBase {
 //            new Object[]{new MinaServletContainer(8080)},
 //            new Object[]{new NettyServletContainer(8080)},
         };
+    }
+
+    protected String read(InputStream content) throws IOException {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        int read;
+        final byte[] bytes = new byte[4096];
+        while((read = content.read(bytes)) != -1) {
+            stream.write(bytes, 0, read);
+        }
+
+        return new String(stream.toByteArray());
+    }
+
+    protected void validateHeader(HttpResponse responseBody, final String name, final String value) {
+        final Header[] names = responseBody.getHeaders(name);
+        Assert.assertTrue(names.length == 1 && names[0].getValue().equals(value));
     }
 }
