@@ -46,9 +46,9 @@ public class FilterHolder {
         getFilter().doFilter(request, response, chain);
     }
 
-    public boolean matches(ServletRequest request, String name) {
+    public boolean matches(ServletRequest request, ServletHolder holder) {
         if (!(request instanceof HttpServletRequest)) {
-            return true;
+            return false;
         }
         boolean matched = false;
         final String uri = ((HttpServletRequest) request).getRequestURI();
@@ -56,8 +56,8 @@ public class FilterHolder {
         while (iterator.hasNext() && !matched) {
             matched = iterator.next().matcher(uri).matches();
         }
-        if (!matched) {
-            matched = servletNames.contains(name);
+        if (!matched && holder != null) {
+            matched = servletNames.contains(holder.getName());
         }
         return matched;
     }
@@ -112,5 +112,17 @@ public class FilterHolder {
                 return context.getInitParameterNames();
             }
         });
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("FilterHolder{");
+        sb.append("servletNames=").append(servletNames);
+        sb.append(", filterClass='").append(filterClass).append('\'');
+        sb.append(", urlPatterns=").append(urlPatterns);
+        sb.append(", asyncSuppported=").append(asyncSuppported);
+        sb.append('}');
+        return sb.toString();
     }
 }

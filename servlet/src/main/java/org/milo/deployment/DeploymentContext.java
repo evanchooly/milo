@@ -101,8 +101,7 @@ public class DeploymentContext {
         try {
             final Class<Servlet> clazz = (Class<Servlet>) getClass().getClassLoader().loadClass(
                 value.getServletClass().getValue());
-            final ServletHolder holder = new ServletHolder(name, clazz);
-            holder.setServletContext(servletContext);
+            final ServletHolder holder = new ServletHolder(servletContext, name, clazz);
             final String loadOnStartup = value.getLoadOnStartup();
             if (loadOnStartup != null) {
                 holder.setLoadOnStartup(Integer.valueOf(loadOnStartup));

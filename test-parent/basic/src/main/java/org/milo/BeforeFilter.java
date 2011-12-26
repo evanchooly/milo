@@ -16,6 +16,7 @@
 package org.milo;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -25,6 +26,7 @@ import javax.servlet.ServletResponse;
 
 public class BeforeFilter implements Filter {
     public static final String BEFORE = "###BEFORE###";
+    private PrintWriter printWriter;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -33,7 +35,9 @@ public class BeforeFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
-        response.getWriter().write(BEFORE);
+        printWriter = new PrintWriter(response.getOutputStream());
+        printWriter.write(BEFORE);
+        printWriter.flush();
         chain.doFilter(request, response);
     }
 

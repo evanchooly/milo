@@ -15,18 +15,17 @@ public class StaticResources extends MiloTestBase {
     public void rootFiles(ServletContainer container) throws IOException, ServletException {
         try {
             container.start();
-            container.createContext("ROOT", "/", "tests/basic/target/basic");
-            HttpClient httpclient = new DefaultHttpClient();
-            assertBody(httpclient, "http://localhost:" + 8080 + "/foo.txt", "foo");
-            assertBody(httpclient, "http://localhost:" + 8080 + "/sub/file.txt", "what up?");
+            DefaultHttpClient httpclient = new DefaultHttpClient();
+            container.createContext("ROOT", "/", "test-parent/basic/src/main/webapp");
+            assertBody(httpclient, "http://localhost:" + 8080 + "/foo.txt", "###BEFORE###foo");
+            assertBody(httpclient, "http://localhost:" + 8080 + "/sub/file.txt", "###BEFORE###what up?");
         } finally {
             container.stop();
         }
 
     }
 
-    private void assertBody(HttpClient httpclient, final String uri, final String body) throws IOException {
-        Assert.assertTrue(read(httpclient.execute(new HttpGet(uri)).getEntity().getContent())
-                .equals(body));
+    private void assertBody(final HttpClient httpclient, final String uri, final String body) throws IOException {
+        Assert.assertEquals(read(httpclient.execute(new HttpGet(uri)).getEntity().getContent()), body);
     }
 }

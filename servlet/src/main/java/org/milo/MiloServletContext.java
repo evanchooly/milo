@@ -56,6 +56,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.milo.deployment.DeploymentContext;
 import org.milo.deployment.ServletHolder;
+import org.milo.staticresources.StaticResourcesHolder;
 
 public class MiloServletContext implements ServletContext {
     private static final String CONTEXT_NAME = DeploymentContext.class.getName();
@@ -70,10 +71,9 @@ public class MiloServletContext implements ServletContext {
     private Set<SessionTrackingMode> sessionTrackingModes;
     private List<EventListener> listeners = new ArrayList<>();
     private ClassLoader webAppClassLoader;
-    private File webXml;
     private Map<String, ServletHolder> mappings;
     private FilterSet filterSet;
-    private Map<String, List<String>> jarCache;
+    private StaticResourcesHolder staticResources;
 
     public MiloServletContext(ServletContainer container, String name, String path, String root)
         throws ServletException {
@@ -85,15 +85,20 @@ public class MiloServletContext implements ServletContext {
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-        webXml = new File(root, "WEB-INF/web.xml");
+        File webXml = new File(root, "WEB-INF/web.xml");
         if (!webXml.exists()) {
             throw new ServletException("No WEB-INF/web.xml found: " + webXml.getAbsolutePath());
         }
         webAppClassLoader = new WebAppClassLoader(root);
-        deploy();
+        deploy(webXml);
+        staticResources = new StaticResourcesHolder(this);
     }
 
-    private void deploy() throws ServletException {
+    public File getDocRoot() {
+        return new File(root);
+    }
+
+    private void deploy(File webXml) throws ServletException {
         try {
             final DeploymentContext context = (DeploymentContext) webAppClassLoader.loadClass(CONTEXT_NAME)
                 .newInstance();
@@ -469,23 +474,29 @@ public class MiloServletContext implements ServletContext {
 
     public ServletHolder loadServlet(String uri) throws ServletException {
         ServletHolder servletHolder = null;
-        while (servletHolder == null) {
-            servletHolder = mappings.get(uri);
+        String resource = uri;
+        while (servletHolder == null && resource.contains("/")) {
+            servletHolder = mappings.get(resource);
             if (servletHolder == null) {
-                uri = uri.substring(uri.lastIndexOf("/"));
+                resource = resource.substring(0, resource.lastIndexOf("/"));
+            }
+        }
+        if(servletHolder == null) {
+            if(staticResources.matches(uri)) {
+                servletHolder = staticResources;
             }
         }
         return servletHolder;
     }
 
     public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        final ServletHolder servlet = loadServlet(request.getRequestURI());
-        if (servlet == null) {
+        final String requestURI = request.getRequestURI();
+        ServletHolder holder = loadServlet(requestURI);
+        if (holder == null) {
             response.setStatus(404);
         } else {
-            filterSet.doFilter(request, response, servlet);
+            filterSet.doFilter(request, response, holder);
         }
-
     }
 
     private static class JarZipFilenameFilter implements FilenameFilter {
@@ -495,4 +506,5 @@ public class MiloServletContext implements ServletContext {
             return lower.endsWith(".jar") || lower.endsWith(".zip");
         }
     }
+
 }

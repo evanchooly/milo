@@ -44,18 +44,28 @@ public abstract class ServletContainer {
 
     protected void service(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        final String uri = request.getRequestURI();
-        final MiloServletContext context = getContext(uri);
+        final MiloServletContext context = getContext(request.getRequestURI());
         context.service(request, response);
     }
 
     public MiloServletContext getContext(String uriPath) {
         MiloServletContext context = contexts.get(uriPath);
-        while(context == null && uriPath.contains("/")) {
-            uriPath = uriPath.substring(0, uriPath.lastIndexOf("/") + 1);
-            context = contexts.get(uriPath);
+        final String[] pathElements = uriPath.split("/");
+        int index = pathElements.length - 1;
+        while (context == null && index > 0) {
+            context = contexts.get(join(pathElements, index--));
         }
         return context;
+    }
+
+    private String join(String[] pathElements, int length) {
+        StringBuilder builder = new StringBuilder();
+        for (int index = 0; index < length; index++) {
+            builder
+                .append(pathElements[index])
+                .append("/");
+        }
+        return builder.toString();
     }
 
     public abstract String getMimeType(String file);

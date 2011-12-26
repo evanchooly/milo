@@ -29,6 +29,7 @@ import org.milo.deployment.ServletHolder;
 public class FilterChainImpl implements FilterChain {
     private Iterator<FilterHolder> holders;
     private ServletHolder servlet;
+    private boolean servletInvoked = false;
 
     public FilterChainImpl(ServletHolder servlet, List<FilterHolder> holders) {
         this.servlet = servlet;
@@ -37,17 +38,17 @@ public class FilterChainImpl implements FilterChain {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
-        if (!holders.hasNext()) {
-            servlet.loadServlet().service(request, response);
-        } else {
-            boolean matched = false;
-            while (!matched && holders.hasNext()) {
-                final FilterHolder holder = holders.next();
-                if (holder.matches(request, servlet.getName())) {
-                    matched = true;
-                    holder.doFilter(request, response, this);
-                }
+        boolean matched = false;
+        while (!matched && holders.hasNext()) {
+            final FilterHolder holder = holders.next();
+            if (holder.matches(request, servlet)) {
+                matched = true;
+                holder.doFilter(request, response, this);
             }
+        }
+        if (!holders.hasNext() && !servletInvoked) {
+            servletInvoked = true;
+            servlet.loadServlet().service(request, response);
         }
     }
 }

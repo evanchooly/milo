@@ -33,7 +33,7 @@ public class BasicServletTest extends MiloTestBase {
     public void deployServlet(ServletContainer container) throws IOException, ServletException {
         try {
             container.start();
-            container.createContext("ROOT", "/", "tests/basic/target/basic");
+            container.createContext("ROOT", "/", "test-parent/basic/src/main/webapp");
             HttpClient httpclient = new DefaultHttpClient();
             HttpResponse response = httpclient.execute(new HttpGet("http://localhost:" + 8080 + "/root"));
             final StatusLine statusLine = response.getStatusLine();
@@ -44,6 +44,7 @@ public class BasicServletTest extends MiloTestBase {
             validateHeader(response, "name3", "value3");
             String body = read(response.getEntity().getContent());
             Assert.assertTrue(body.startsWith("###BEFORE###"));
+            Assert.assertTrue(body.contains("BasicServlet.service"));
             Assert.assertTrue(body.endsWith("###AFTER###"));
         } finally {
             container.stop();

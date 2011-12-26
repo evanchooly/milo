@@ -26,7 +26,7 @@
     <dependencies>
         <dependency>
             <groupId>org.milo.tests</groupId>
-            <artifactId>basic</artifactId>
+            <artifactId>basic-test</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

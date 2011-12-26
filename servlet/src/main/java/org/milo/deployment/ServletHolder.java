@@ -29,20 +29,17 @@ public class ServletHolder {
     private String name;
     private Class<? extends Servlet> klass;
     private Servlet cachedServlet;
-    private MiloServletContext servletContext;
+    private final MiloServletContext servletContext;
     private Integer loadOnStartup = -1;
 
-    public ServletHolder(String name, Class<? extends Servlet> clazz) {
+    public ServletHolder(MiloServletContext servletContext, String name, Class<? extends Servlet> clazz) {
+        this.servletContext = servletContext;
         this.name = name;
         klass = clazz;
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setServletContext(MiloServletContext miloServletContext) {
-        servletContext = miloServletContext;
     }
 
     public Integer getLoadOnStartup() {

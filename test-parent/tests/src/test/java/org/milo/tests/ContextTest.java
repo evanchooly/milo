@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 
 @Test(dataProvider = "containers")
 public class ContextTest extends MiloTestBase {
-    private static final String CONTEXT_ROOT = "tests/resourcePaths/target/resourcePaths";
+    private static final String CONTEXT_ROOT = "test-parent/resourcePaths/target/resourcePaths";
 
     public void getResourcePaths(ServletContainer container) throws ServletException {
         final MiloServletContext context = container.createContext("ROOT", "/", CONTEXT_ROOT);

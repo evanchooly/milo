@@ -98,7 +98,7 @@
         <module>grizzly</module>
         <module>mina</module>
         <module>netty</module>
-        <module>tests</module>
+        <module>test-parent</module>
     </modules>
     <dependencyManagement>
         <dependencies>
