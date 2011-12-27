@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.milo</groupId>
+        <groupId>org.miloframework</groupId>
         <artifactId>milo-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.milo</groupId>
+    <groupId>org.miloframework</groupId>
     <artifactId>servlet</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -32,8 +32,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <packageName>org.milo.deployment</packageName>
-                    <staleFile>target/generated-sources/jaxb/org/milo/deployment/WebAppType.java</staleFile>
+                    <packageName>org.miloframework.deployment</packageName>
+                    <staleFile>target/generated-sources/jaxb/org/miloframework/deployment/WebAppType.java</staleFile>
                 </configuration>
             </plugin>
         </plugins>

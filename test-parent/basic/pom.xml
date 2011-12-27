@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.milo.tests</groupId>
+        <groupId>org.miloframework.tests</groupId>
         <artifactId>test-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.milo.tests</groupId>
+    <groupId>org.miloframework.tests</groupId>
     <artifactId>basic-test</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>war</packaging>
@@ -35,6 +35,7 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.0.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

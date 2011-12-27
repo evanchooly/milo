@@ -20,7 +20,7 @@
 
     <servlet>
         <servlet-name>BasicServlet</servlet-name>
-        <servlet-class>org.milo.BasicServlet</servlet-class>
+        <servlet-class>org.miloframework.BasicServlet</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
 
