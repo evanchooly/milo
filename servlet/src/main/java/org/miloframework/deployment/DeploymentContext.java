@@ -37,7 +37,14 @@ public class DeploymentContext {
     private Map<String, ServletHolder> servletHolders = new HashMap<>();
     private List<String> listeners = new ArrayList<>();
     private MiloServletContext servletContext;
-    private FilterSet filterSet = new FilterSet();
+    private FilterSet filterSet;
+    private ClassLoader classLoader;
+
+    public DeploymentContext(MiloServletContext servletContext) {
+        this.servletContext = servletContext;
+        classLoader = servletContext.getClassLoader();
+        filterSet = new FilterSet(this.servletContext);
+    }
 
     public void setServletContext(MiloServletContext servletContext) {
         this.servletContext = servletContext;
@@ -99,7 +106,7 @@ public class DeploymentContext {
     private void parse(ServletType value) throws ServletException {
         final String name = value.getServletName().getValue();
         try {
-            final Class<Servlet> clazz = (Class<Servlet>) getClass().getClassLoader().loadClass(
+            final Class<Servlet> clazz = (Class<Servlet>) getClassLoader().loadClass(
                 value.getServletClass().getValue());
             final ServletHolder holder = new ServletHolder(servletContext, name, clazz);
             final String loadOnStartup = value.getLoadOnStartup();
@@ -152,5 +159,9 @@ public class DeploymentContext {
 
     public FilterSet getFilterSet() {
         return filterSet;
+    }
+
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
 }

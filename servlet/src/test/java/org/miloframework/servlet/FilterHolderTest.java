@@ -25,19 +25,20 @@ import org.testng.annotations.Test;
 @Test
 public class FilterHolderTest {
     public void mapping() {
-        FilterHolder holder = new FilterHolder();
+        final ClassLoader classLoader = getClass().getClassLoader();
+        FilterHolder holder = new FilterHolder(classLoader);
         holder.addUrlPattern("/*");
         holder.addServletName("Dr. Dorian");
         final String name = "TestServlet";
         final ServletHolder servletHolder = new ServletHolder(null, name, Servlet.class);
         Assert.assertTrue(holder.matches(new DummyServletRequest("/bob/loblaw"), servletHolder));
-        holder = new FilterHolder();
+        holder = new FilterHolder(classLoader);
         holder.addUrlPattern("/bob/*");
         Assert.assertTrue(holder.matches(new DummyServletRequest("/bob/loblaw"), servletHolder));
         Assert.assertFalse(holder.matches(new DummyServletRequest("/foo"), new ServletHolder(null, "Doug", Servlet.class)));
         Assert.assertFalse(holder.matches(new DummyServletRequest("/foo"), servletHolder));
         Assert.assertTrue(holder.matches(new DummyServletRequest("/bob/bar/boo"), servletHolder));
-        holder = new FilterHolder();
+        holder = new FilterHolder(classLoader);
         holder.addUrlPattern("*.jsp");
         Assert.assertTrue(holder.matches(new DummyServletRequest("/index.jsp"), servletHolder));
         Assert.assertFalse(holder.matches(new DummyServletRequest("/api/login"), servletHolder));

@@ -19,13 +19,13 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
     <servlet>
-        <servlet-name>BasicServlet</servlet-name>
-        <servlet-class>org.miloframework.BasicServlet</servlet-class>
+        <servlet-name>RootServlet</servlet-name>
+        <servlet-class>org.miloframework.RootServlet</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>BasicServlet</servlet-name>
+        <servlet-name>RootServlet</servlet-name>
         <url-pattern>/root</url-pattern>
     </servlet-mapping>
 

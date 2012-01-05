@@ -17,5 +17,5 @@ package org.miloframework;
 
 import javax.servlet.http.HttpServlet;
 
-public class BasicServlet extends HttpServlet {
+public class RootServlet extends HttpServlet {
 }

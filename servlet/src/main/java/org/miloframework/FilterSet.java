@@ -31,9 +31,14 @@ import org.miloframework.deployment.TrueFalseType;
 
 public class FilterSet {
     private final Map<String, FilterHolder> filters = new LinkedHashMap<>();
+    private MiloServletContext servletContext;
+
+    public FilterSet(MiloServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
 
     public void add(FilterType filterType) {
-        final FilterHolder holder = new FilterHolder();
+        final FilterHolder holder = new FilterHolder(servletContext.getClassLoader());
         final String name = filterType.getFilterName().getValue();
         holder.setFilterClass(filterType.getFilterClass().getValue());
         final TrueFalseType asyncSupported = filterType.getAsyncSupported();

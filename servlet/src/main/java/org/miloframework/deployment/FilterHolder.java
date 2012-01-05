@@ -40,6 +40,11 @@ public class FilterHolder {
     private Filter filter;
     private String filterClass;
     private boolean asyncSuppported;
+    private ClassLoader webappClassloader;
+
+    public FilterHolder(final ClassLoader classLoader) {
+        webappClassloader = classLoader;
+    }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChainImpl chain)
         throws ServletException, IOException {
@@ -73,7 +78,7 @@ public class FilterHolder {
     public Filter getFilter() throws ServletException {
         if (filter == null) {
             try {
-                filter = ((Class<? extends Filter>) getClass().getClassLoader()
+                filter = ((Class<? extends Filter>) webappClassloader
                                     .loadClass(filterClass)).newInstance();
             } catch (ReflectiveOperationException e) {
                 throw new ServletException(e.getMessage(), e);

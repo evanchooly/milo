@@ -59,7 +59,6 @@ import org.miloframework.deployment.ServletHolder;
 import org.miloframework.staticresources.StaticResourcesHolder;
 
 public class MiloServletContext implements ServletContext {
-    private static final String CONTEXT_NAME = DeploymentContext.class.getName();
     private static final String RESOURCES_PATH = "META-INF/resources";
     private final String path;
     private String root;
@@ -85,10 +84,13 @@ public class MiloServletContext implements ServletContext {
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+        System.out.println("root = " + this.root);
+        System.out.println("new File = " + new File(".").getAbsolutePath());
         File webXml = new File(root, "WEB-INF/web.xml");
         if (!webXml.exists()) {
             throw new ServletException("No WEB-INF/web.xml found: " + webXml.getAbsolutePath());
         }
+        webAppClassLoader = new WebappClassLoader(this.root, getClass().getClassLoader());
         deploy(webXml);
         staticResources = new StaticResourcesHolder(this);
     }
@@ -98,16 +100,9 @@ public class MiloServletContext implements ServletContext {
     }
 
     private void deploy(File webXml) throws ServletException {
-        try {
-            final DeploymentContext context = (DeploymentContext) webAppClassLoader.loadClass(CONTEXT_NAME)
-                .newInstance();
-            context.setServletContext(this);
-            context.load(webXml.getAbsoluteFile());
-            init(context);
-
-        } catch (ReflectiveOperationException e) {
-            throw new ServletException(e.getMessage(), e);
-        }
+        final DeploymentContext context = new DeploymentContext(this);
+        context.load(webXml.getAbsoluteFile());
+        init(context);
     }
 
     private void init(DeploymentContext context) throws ServletException {

@@ -16,7 +16,6 @@
 package org.miloframework;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.ServletException;
@@ -41,20 +40,6 @@ public abstract class ServletContainer {
         final MiloServletContext context = new MiloServletContext(this, name, path, root);
         final MiloServletContext put = contexts.put(path, context);
         return put == null ? context : put;
-    }
-    public MiloServletContext createContext2(String name, String path, String root) throws ServletException {
-        WebAppClassLoader webAppClassLoader = new WebAppClassLoader(root);
-        try {
-            final Class aClass = webAppClassLoader.loadClass("org.miloframework.MiloServletContext");
-            final Constructor[] constructors = aClass.getConstructors();
-            final Constructor constructor = constructors[0];
-            final MiloServletContext context =
-                (MiloServletContext) constructor.newInstance(this, name, path, root);
-            final MiloServletContext put = contexts.put(path, context);
-            return put == null ? context : put;
-        } catch (ReflectiveOperationException e) {
-            throw new ServletException(e.getMessage(), e);
-        }
     }
 
     protected void service(HttpServletRequest request, HttpServletResponse response)

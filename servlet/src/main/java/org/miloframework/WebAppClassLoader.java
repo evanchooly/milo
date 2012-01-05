@@ -21,18 +21,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-public class WebAppClassLoader extends URLClassLoader {
-    public WebAppClassLoader(String root) {
+public class WebappClassLoader extends URLClassLoader {
+    private ClassLoader parent;
+
+    public WebappClassLoader(String root, ClassLoader parent) {
         super(new URL[]{}, null);
+        this.parent = parent;
         loadWarInfo(root);
-        loadParentData();
     }
 
     private void loadWarInfo(String root) {
         File rootDir = new File(root);
         try {
-            addURL(new File(rootDir, "classes").toURI().toURL());
-            final File[] files = new File(rootDir, "lib").listFiles(new FilenameFilter() {
+            addURL(new File(rootDir, "WEB-INF/classes").toURI().toURL());
+            final File[] files = new File(rootDir, "WEB-INF/lib").listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
                     return name.endsWith(".zip") || name.endsWith(".jar");
@@ -48,22 +50,20 @@ public class WebAppClassLoader extends URLClassLoader {
         }
     }
 
-    private void loadParentData() {
-        final ClassLoader parent = getClass().getClassLoader();
-        if (parent instanceof URLClassLoader) {
-            for (URL url : ((URLClassLoader) parent).getURLs()) {
-                addURL(url);
-            }
-        }
-    }
-
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
-        return super.loadClass(name);
+        return loadClass(name, false);
     }
 
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        if(isSystemClass(name)) {
+            return parent.loadClass(name);
+        }
         return super.loadClass(name, resolve);
+    }
+
+    private boolean isSystemClass(String name) {
+        return name.startsWith("java.") || name.startsWith("javax.servlet.");
     }
 }

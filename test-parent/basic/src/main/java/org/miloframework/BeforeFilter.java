@@ -35,7 +35,7 @@ public class BeforeFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
-        printWriter = new PrintWriter(response.getOutputStream());
+        printWriter = response.getWriter();//new PrintWriter(response.getOutputStream());
         printWriter.write(BEFORE);
         printWriter.flush();
         chain.doFilter(request, response);

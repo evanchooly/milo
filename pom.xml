@@ -38,6 +38,29 @@
                         <threshold>Med</threshold>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>com.sun.istack</groupId>
+                    <artifactId>maven-istack-commons-plugin</artifactId>
+                    <version>2.4</version>
+                    <executions>
+                        <execution>
+                            <phase>generate-sources</phase>
+                            <configuration>
+                                <resources>
+                                    <directory>${basedir}/src/main/resources</directory>
+                                    <includes>
+                                        <include>**/*.properties</include>
+                                    </includes>
+                                </resources>
+                                <destDir>${project.build.directory}/generated-sources</destDir>
+                                <localizationUtilitiesPkgName>org.miloframework.localization</localizationUtilitiesPkgName>
+                            </configuration>
+                            <goals>
+                                <goal>rs-gen</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -56,6 +79,7 @@
             <plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
+                <version>1.10.b1</version>
                 <configuration>
                     <basedir>${project.basedir}</basedir>
                     <header>etc/aslv2.txt</header>
@@ -118,6 +142,11 @@
                 <artifactId>testng</artifactId>
                 <version>6.1.1</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.6.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

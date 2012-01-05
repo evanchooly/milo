@@ -16,9 +16,9 @@ public class StaticResources extends MiloTestBase {
         try {
             container.start();
             DefaultHttpClient httpclient = new DefaultHttpClient();
-            container.createContext("ROOT", "/", "test-parent/basic/src/main/webapp");
-            assertBody(httpclient, "http://localhost:" + 8080 + "/foo.txt", "###BEFORE###foo");
-            assertBody(httpclient, "http://localhost:" + 8080 + "/sub/file.txt", "###BEFORE###what up?");
+            container.createContext("ROOT", "/", "test-parent/basic/target/basic");
+            assertBody(httpclient, "http://localhost:" + 8080 + "/foo.txt", "foo");
+            assertBody(httpclient, "http://localhost:" + 8080 + "/sub/file.txt", "what up?");
         } finally {
             container.stop();
         }

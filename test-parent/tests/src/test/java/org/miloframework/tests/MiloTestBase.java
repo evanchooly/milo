@@ -48,6 +48,6 @@ public class MiloTestBase {
 
     protected void validateHeader(HttpResponse responseBody, final String name, final String value) {
         final Header[] names = responseBody.getHeaders(name);
-        Assert.assertTrue(names.length == 1 && names[0].getValue().equals(value));
+        Assert.assertEquals(names[0].getValue(), value);
     }
 }

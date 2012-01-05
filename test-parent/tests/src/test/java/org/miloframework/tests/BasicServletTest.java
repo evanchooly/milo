@@ -42,7 +42,6 @@ public class BasicServletTest extends MiloTestBase {
             validateHeader(response, "name2", "value2");
             validateHeader(response, "name3", "value3");
             String body = read(response.getEntity().getContent());
-            Assert.assertTrue(body.startsWith("###BEFORE###"));
             Assert.assertTrue(body.contains("BasicServlet.service"));
             Assert.assertTrue(body.endsWith("###AFTER###"));
         } finally {

@@ -90,16 +90,18 @@
         <servlet-name>BasicServlet4</servlet-name>
         <url-pattern>/4</url-pattern>
     </servlet-mapping>
-    
-    <filter>
-        <filter-name>Before</filter-name>
-        <filter-class>org.miloframework.BeforeFilter</filter-class>
-    </filter>
-    
-    <filter-mapping>
-        <filter-name>Before</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+
+    <!--
+        <filter>
+            <filter-name>Before</filter-name>
+            <filter-class>org.miloframework.BeforeFilter</filter-class>
+        </filter>
+
+        <filter-mapping>
+            <filter-name>Before</filter-name>
+            <url-pattern>/*</url-pattern>
+        </filter-mapping>
+    -->
 
     <filter>
         <filter-name>After</filter-name>
