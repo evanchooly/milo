@@ -21,10 +21,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-public class WebappClassLoader extends URLClassLoader {
+public class WebAppClassLoader extends URLClassLoader {
     private ClassLoader parent;
 
-    public WebappClassLoader(String root, ClassLoader parent) {
+    public WebAppClassLoader(String root, ClassLoader parent) {
         super(new URL[]{}, null);
         this.parent = parent;
         loadWarInfo(root);

@@ -88,7 +88,7 @@ public class MiloServletContext implements ServletContext {
         if (!webXml.exists()) {
             throw new ServletException("No WEB-INF/web.xml found: " + webXml.getAbsolutePath());
         }
-        webAppClassLoader = new WebappClassLoader(this.root, getClass().getClassLoader());
+        webAppClassLoader = new WebAppClassLoader(this.root, getClass().getClassLoader());
         deploy(webXml);
         staticResources = new StaticResourcesHolder(this);
     }
