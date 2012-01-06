@@ -15,7 +15,6 @@
  */
 package org.miloframework;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,8 +37,7 @@ public abstract class ServletContainer {
     public abstract void stop();
 
     public MiloServletContext createContext(String name, String path, String root) throws ServletException {
-        System.out.println(new File(".").getAbsolutePath());
-       final MiloServletContext context = new MiloServletContext(this, name, path, root);
+        final MiloServletContext context = new MiloServletContext(this, name, path, root);
         final MiloServletContext put = contexts.put(path, context);
         return put == null ? context : put;
     }

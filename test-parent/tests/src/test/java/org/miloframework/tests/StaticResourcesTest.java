@@ -11,12 +11,12 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 @Test(dataProvider = "containers")
-public class StaticResources extends MiloTestBase {
+public class StaticResourcesTest extends MiloTestBase {
     public void rootFiles(ServletContainer container) throws IOException, ServletException {
         try {
             container.start();
             DefaultHttpClient httpclient = new DefaultHttpClient();
-            container.createContext("ROOT", "/", "test-parent/basic/target/basic");
+            container.createContext("ROOT", "/", "../basic/target/basic");
             assertBody(httpclient, "http://localhost:" + 8080 + "/foo.txt", "foo");
             assertBody(httpclient, "http://localhost:" + 8080 + "/sub/file.txt", "what up?");
         } finally {

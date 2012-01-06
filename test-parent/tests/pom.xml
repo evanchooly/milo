@@ -17,7 +17,6 @@
 
     <name>tests</name>
 
-    
     <build>
         <finalName>tests</finalName>
         <defaultGoal>test</defaultGoal>

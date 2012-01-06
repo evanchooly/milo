@@ -84,8 +84,6 @@ public class MiloServletContext implements ServletContext {
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-        System.out.println("root = " + this.root);
-        System.out.println("new File = " + new File(".").getAbsolutePath());
         File webXml = new File(root, "WEB-INF/web.xml");
         if (!webXml.exists()) {
             throw new ServletException("No WEB-INF/web.xml found: " + webXml.getAbsolutePath());
