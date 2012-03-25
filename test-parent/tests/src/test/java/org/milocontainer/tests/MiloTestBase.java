@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.miloframework.tests;
+package org.milocontainer.tests;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,7 +21,7 @@ import java.io.InputStream;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.miloframework.grizzly.GrizzlyServletContainer;
+import org.milocontainer.grizzly.GrizzlyServletContainer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 

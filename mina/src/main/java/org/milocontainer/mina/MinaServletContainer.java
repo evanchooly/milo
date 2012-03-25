@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.miloframework;
+package org.milocontainer.mina;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -26,6 +26,7 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.proxy.AbstractProxyIoHandler;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import org.miloframework.ServletContainer;
 
 public class MinaServletContainer extends ServletContainer {
     private DefaultIoFilterChainBuilder chain;

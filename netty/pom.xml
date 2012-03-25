@@ -8,12 +8,12 @@
     </properties>
 
     <parent>
-        <groupId>org.miloframework</groupId>
+        <groupId>org.milocontainer</groupId>
         <artifactId>milo-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.miloframework</groupId>
+    <groupId>org.milocontainer</groupId>
     <artifactId>netty</artifactId>
     <version>0.1-SNAPSHOT</version>
     <name>milo-netty</name>
@@ -24,7 +24,7 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.miloframework</groupId>
+            <groupId>org.milocontainer</groupId>
             <artifactId>servlet</artifactId>
             <version>${project.version}</version>
         </dependency>

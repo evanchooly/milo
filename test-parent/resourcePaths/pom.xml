@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.miloframework.tests</groupId>
+        <groupId>org.milocontainer.tests</groupId>
         <artifactId>test-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.miloframework.tests</groupId>
+    <groupId>org.milocontainer.tests</groupId>
     <artifactId>resource-paths</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>war</packaging>

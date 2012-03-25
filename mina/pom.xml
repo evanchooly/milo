@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.miloframework</groupId>
+        <groupId>org.milocontainer</groupId>
         <artifactId>milo-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.miloframework</groupId>
+    <groupId>org.milocontainer</groupId>
     <artifactId>mina</artifactId>
     <version>0.1-SNAPSHOT</version>
     <name>milo-mina</name>
@@ -26,7 +26,7 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.miloframework</groupId>
+            <groupId>org.milocontainer</groupId>
             <artifactId>servlet</artifactId>
             <version>${project.version}</version>
         </dependency>
