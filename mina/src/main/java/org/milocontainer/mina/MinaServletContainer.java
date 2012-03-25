@@ -26,7 +26,7 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.proxy.AbstractProxyIoHandler;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
-import org.miloframework.ServletContainer;
+import org.milocontainer.ServletContainer;
 
 public class MinaServletContainer extends ServletContainer {
     private DefaultIoFilterChainBuilder chain;

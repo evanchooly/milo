@@ -19,7 +19,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.miloframework.ServletContainer;
+import org.milocontainer.ServletContainer;
 import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
@@ -48,7 +48,7 @@ public class GrizzlyServletContainer extends ServletContainer {
     public GrizzlyServletContainer(String host, int port) throws IOException {
         super(host, port);
         server = new HttpServer();
-        server.addListener(new NetworkListener("miloframework", this.host, this.port));
+        server.addListener(new NetworkListener("milocontainer", this.host, this.port));
          server.getServerConfiguration().addHttpHandler(new HttpHandler() {
             @Override
             public void service(Request request, Response response) throws Exception {
